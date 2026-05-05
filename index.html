@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LibraNet – Library Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-brand">📚 LibraNet</div>
+  <ul class="nav-links">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#books">Books</a></li>
+    <li><a href="#members">Members</a></li>
+    <li><a href="#issue">Issue/Return</a></li>
+    <li><a href="#about">About</a></li>
+  </ul>
+  <button class="nav-btn" onclick="showSection('admin')">Admin Login</button>
+</nav>
+
+<!-- HOME SECTION -->
+<section id="home" class="section hero-section active-section">
+  <div class="hero-content">
+    <span class="hero-badge">BCA Final Year Project</span>
+    <h1 class="hero-title">Library <br/><span class="gold">Management</span><br/>System</h1>
+    <p class="hero-sub">A complete digital solution for managing books, members, and library operations efficiently.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showSection('books')">Browse Books</button>
+      <button class="btn-outline" onclick="showSection('issue')">Issue a Book</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num" data-target="248">0</span><span class="stat-label">Books</span></div>
+      <div class="stat"><span class="stat-num" data-target="132">0</span><span class="stat-label">Members</span></div>
+      <div class="stat"><span class="stat-num" data-target="57">0</span><span class="stat-label">Issued</span></div>
+      <div class="stat"><span class="stat-num" data-target="12">0</span><span class="stat-label">Categories</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="book-stack">
+      <div class="book b1">Database Systems</div>
+      <div class="book b2">OS Concepts</div>
+      <div class="book b3">Data Structures</div>
+      <div class="book b4">CN & Networks</div>
+      <div class="book b5">Web Technology</div>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKS SECTION -->
+<section id="books" class="section" style="display:none">
+  <div class="section-header">
+    <h2>📖 Book Catalog</h2>
+    <p>Browse and manage all library books</p>
+  </div>
+  <div class="toolbar">
+    <input type="text" id="bookSearch" placeholder="Search books by title or author..." oninput="searchBooks()" class="search-input"/>
+    <select id="categoryFilter" onchange="filterByCategory()" class="filter-select">
+      <option value="all">All Categories</option>
+      <option value="CS">Computer Science</option>
+      <option value="Math">Mathematics</option>
+      <option value="Science">Science</option>
+      <option value="Literature">Literature</option>
+    </select>
+    <button class="btn-primary" onclick="openModal('addBookModal')">+ Add Book</button>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table" id="bookTable">
+      <thead>
+        <tr><th>Book ID</th><th>Title</th><th>Author</th><th>Category</th><th>Copies</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="bookTbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- MEMBERS SECTION -->
+<section id="members" class="section" style="display:none">
+  <div class="section-header">
+    <h2>👥 Members</h2>
+    <p>Manage library members and their records</p>
+  </div>
+  <div class="toolbar">
+    <input type="text" id="memberSearch" placeholder="Search members..." oninput="searchMembers()" class="search-input"/>
+    <button class="btn-primary" onclick="openModal('addMemberModal')">+ Add Member</button>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table" id="memberTable">
+      <thead>
+        <tr><th>Member ID</th><th>Name</th><th>Course</th><th>Email</th><th>Books Issued</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="memberTbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ISSUE / RETURN SECTION -->
+<section id="issue" class="section" style="display:none">
+  <div class="section-header">
+    <h2>🔄 Issue / Return Books</h2>
+    <p>Track book lending and returns</p>
+  </div>
+  <div class="issue-grid">
+    <div class="issue-card">
+      <h3>📤 Issue a Book</h3>
+      <div class="form-group">
+        <label>Member ID</label>
+        <input type="text" id="issueMemberId" placeholder="e.g. MEM001" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label>Book ID</label>
+        <input type="text" id="issueBookId" placeholder="e.g. BK001" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label>Issue Date</label>
+        <input type="date" id="issueDate" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label>Return Due Date</label>
+        <input type="date" id="dueDate" class="form-input"/>
+      </div>
+      <button class="btn-primary" style="width:100%" onclick="issueBook()">Issue Book</button>
+    </div>
+    <div class="issue-card">
+      <h3>📥 Return a Book</h3>
+      <div class="form-group">
+        <label>Transaction ID</label>
+        <input type="text" id="returnTxnId" placeholder="e.g. TXN001" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label>Return Date</label>
+        <input type="date" id="returnDate" class="form-input"/>
+      </div>
+      <div class="fine-box" id="fineBox" style="display:none">
+        <span>⚠️ Fine Amount: </span><span id="fineAmount" class="fine-val">₹0</span>
+      </div>
+      <button class="btn-primary" style="width:100%;margin-top:1rem" onclick="returnBook()">Return Book</button>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-top:2rem">
+    <h3>📋 Transaction History</h3>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr><th>Txn ID</th><th>Member</th><th>Book</th><th>Issue Date</th><th>Due Date</th><th>Return Date</th><th>Fine</th><th>Status</th></tr>
+      </thead>
+      <tbody id="txnTbody"></tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ABOUT SECTION -->
+<section id="about" class="section" style="display:none">
+  <div class="about-wrapper">
+    <div class="about-left">
+      <h2>About This Project</h2>
+      <p class="about-desc">LibraNet is a web-based Library Management System developed as a BCA Final Year Project. It demonstrates real-world application of web technologies to solve library operational challenges.</p>
+      <div class="tech-tags">
+        <span class="tag">HTML5</span>
+        <span class="tag">CSS3</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">LocalStorage</span>
+        <span class="tag">Responsive Design</span>
+      </div>
+      <div class="features-list">
+        <div class="feature-item">✅ Book Catalog Management</div>
+        <div class="feature-item">✅ Member Registration</div>
+        <div class="feature-item">✅ Issue & Return Tracking</div>
+        <div class="feature-item">✅ Fine Calculation</div>
+        <div class="feature-item">✅ Search & Filter</div>
+        <div class="feature-item">✅ Persistent Data Storage</div>
+      </div>
+    </div>
+    <div class="about-right">
+      <div class="project-card">
+        <div class="project-card-header">Project Details</div>
+        <div class="detail-row"><span>Project Title</span><span>Library Management System</span></div>
+        <div class="detail-row"><span>Developer</span><span>Your Name</span></div>
+        <div class="detail-row"><span>Course</span><span>BCA Final Year</span></div>
+        <div class="detail-row"><span>Technologies</span><span>HTML, CSS, JS</span></div>
+        <div class="detail-row"><span>Year</span><span>2025–26</span></div>
+        <div class="detail-row"><span>Guide</span><span>Prof. Name</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ADMIN SECTION -->
+<section id="admin" class="section" style="display:none">
+  <div class="admin-wrapper">
+    <div class="login-card">
+      <h2>🔐 Admin Login</h2>
+      <p>Enter credentials to access admin panel</p>
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="adminUser" placeholder="admin" class="form-input"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="adminPass" placeholder="••••••••" class="form-input"/>
+      </div>
+      <button class="btn-primary" style="width:100%" onclick="adminLogin()">Login</button>
+      <p class="hint">Demo: admin / admin123</p>
+    </div>
+  </div>
+</section>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="addBookModal" onclick="closeModalOutside(event,'addBookModal')">
+  <div class="modal">
+    <div class="modal-header"><h3>Add New Book</h3><button onclick="closeModal('addBookModal')" class="modal-close">✕</button></div>
+    <div class="form-group"><label>Book ID</label><input id="nb_id" class="form-input" placeholder="BK00X"/></div>
+    <div class="form-group"><label>Title</label><input id="nb_title" class="form-input" placeholder="Book Title"/></div>
+    <div class="form-group"><label>Author</label><input id="nb_author" class="form-input" placeholder="Author Name"/></div>
+    <div class="form-group"><label>Category</label>
+      <select id="nb_cat" class="filter-select" style="width:100%">
+        <option value="CS">Computer Science</option>
+        <option value="Math">Mathematics</option>
+        <option value="Science">Science</option>
+        <option value="Literature">Literature</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Copies</label><input id="nb_copies" class="form-input" type="number" placeholder="1" min="1"/></div>
+    <button class="btn-primary" style="width:100%" onclick="addBook()">Add Book</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addMemberModal" onclick="closeModalOutside(event,'addMemberModal')">
+  <div class="modal">
+    <div class="modal-header"><h3>Add New Member</h3><button onclick="closeModal('addMemberModal')" class="modal-close">✕</button></div>
+    <div class="form-group"><label>Member ID</label><input id="nm_id" class="form-input" placeholder="MEM00X"/></div>
+    <div class="form-group"><label>Full Name</label><input id="nm_name" class="form-input" placeholder="Full Name"/></div>
+    <div class="form-group"><label>Course</label><input id="nm_course" class="form-input" placeholder="BCA, MCA..."/></div>
+    <div class="form-group"><label>Email</label><input id="nm_email" class="form-input" type="email" placeholder="email@example.com"/></div>
+    <button class="btn-primary" style="width:100%" onclick="addMember()">Add Member</button>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
