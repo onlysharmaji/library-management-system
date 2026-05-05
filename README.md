@@ -7,7 +7,7 @@
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat&logo=javascript&logoColor=black)
 
 ## 🌐 Live Demo
-**GitHub Pages URL:** `https://yourusername.github.io/library-management-system`
+**GitHub Pages URL:** `https://github.com/onlysharmaji/library-management-system`
 
 ---
 
